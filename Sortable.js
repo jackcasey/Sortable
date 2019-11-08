@@ -283,7 +283,7 @@
 			}
 
 			// get the index of the dragged element within its parent
-			oldIndex = _index(target);
+			oldIndex = _index(target, options.draggable);
 
 			// Check filter
 			if (typeof filter === 'function') {
@@ -650,7 +650,7 @@
 					_toggleClass(dragEl, this.options.ghostClass, false);
 
 					if (rootEl !== dragEl.parentNode) {
-						newIndex = _index(dragEl);
+						newIndex = _index(dragEl, this.options.draggable);
 
 						// drag from one list and drop into another
 						_dispatchEvent(dragEl.parentNode, 'sort', dragEl, rootEl, oldIndex, newIndex);
@@ -668,7 +668,7 @@
 
 						if (dragEl.nextSibling !== nextEl) {
 							// Get the index of the dragged element within its parent
-							newIndex = _index(dragEl);
+							newIndex = _index(dragEl, this.options.draggable);
 
 							// drag & drop within the same list
 							_dispatchEvent(rootEl, 'update', dragEl, rootEl, oldIndex, newIndex);
@@ -986,11 +986,13 @@
 	 * @returns {number}
 	 * @private
 	 */
-	function _index(/**HTMLElement*/el) {
+	function _index(/**HTMLElement*/el, /**string*/draggableSelector) {
 		var index = 0;
 		while (el && (el = el.previousElementSibling)) {
 			if (el.nodeName.toUpperCase() !== 'TEMPLATE') {
-				index++;
+				if (!draggableSelector || !!_closest(el, draggableSelector, el)) {
+					index++;
+				}
 			}
 		}
 		return index;
